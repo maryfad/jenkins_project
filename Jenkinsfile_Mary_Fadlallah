@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-
         VIRTUAL_ENV = '.venv'
     }
 
@@ -33,7 +32,7 @@ pipeline {
             steps {
                 bat """
                 call %VIRTUAL_ENV%\\Scripts\\activate
-                python -m unittest discover
+                python -m unittest tests.test_app
                 """
             }
         }
