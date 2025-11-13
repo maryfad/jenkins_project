@@ -37,9 +37,32 @@ pipeline {
             }
         }
 
+        stage('Coverage') {
+            steps {
+                bat """
+                call %VIRTUAL_ENV%\\Scripts\\activate
+                coverage run -m unittest tests.test_app
+                coverage report
+                """
+            }
+        }
+
+        stage('Security Scan') {
+            steps {
+                bat """
+                call %VIRTUAL_ENV%\\Scripts\\activate
+                bandit -r .
+                """
+            }
+        }
+
         stage('Deploy') {
             steps {
-                bat "echo Deploying application..."
+                bat """
+                call %VIRTUAL_ENV%\\Scripts\\activate
+                echo Deploying application locally...
+                python app.py
+                """
             }
         }
     }
