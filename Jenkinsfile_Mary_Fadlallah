@@ -2,59 +2,45 @@ pipeline {
     agent any
 
     environment {
-        VIRTUAL_ENV = '.venv'
+        // Name of the virtual environment directory
+        VIRTUAL_ENV = 'venv'
     }
 
     stages {
         stage('Setup') {
             steps {
-                script {
-                    if (!fileExists("${env.WORKSPACE}/${VIRTUAL_ENV}")) {
-                        sh "python -m venv ${VIRTUAL_ENV}"
-                    }
-                    sh """
-                        source ${VIRTUAL_ENV}/bin/activate
-                        pip install --upgrade pip
-                        pip install -r requirements.txt
-                    """
-                }
+                // Create venv and install dependencies
+                bat """
+                python -m venv %VIRTUAL_ENV%
+                call %VIRTUAL_ENV%\\Scripts\\activate
+                pip install --upgrade pip
+                pip install -r requirements.txt
+                """
             }
         }
 
         stage('Lint') {
             steps {
-                script {
-                    sh """
-                        source ${VIRTUAL_ENV}/bin/activate
-                        flake8 app.py
-                    """
-                }
+                bat """
+                call %VIRTUAL_ENV%\\Scripts\\activate
+                flake8 app.py
+                """
             }
         }
 
         stage('Test') {
             steps {
-                script {
-                    sh """
-                        source ${VIRTUAL_ENV}/bin/activate
-                        python -m unittest discover
-                    """
-                }
+                bat """
+                call %VIRTUAL_ENV%\\Scripts\\activate
+                python -m unittest discover
+                """
             }
         }
 
         stage('Deploy') {
             steps {
-                script {
-                    echo "Deploying application..."
-                }
+                bat 'echo Deploying application...'
             }
-        }
-    }
-
-    post {
-        always {
-            cleanWs()
         }
     }
 }
