@@ -2,19 +2,19 @@ pipeline {
     agent any
 
     environment {
-        // Name of the virtual environment directory
-        VIRTUAL_ENV = 'venv'
+        VIRTUAL_ENV = '.venv'
     }
 
     stages {
         stage('Setup') {
             steps {
-                // Create venv and install dependencies
                 bat """
-                python -m venv %VIRTUAL_ENV%
+                REM Use full path to python so Jenkins can find it
+                "C:\\Users\\user\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe" -m venv %VIRTUAL_ENV%
+
                 call %VIRTUAL_ENV%\\Scripts\\activate
-                pip install --upgrade pip
-                pip install -r requirements.txt
+                python -m pip install --upgrade pip
+                python -m pip install -r requirements.txt
                 """
             }
         }
@@ -39,7 +39,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                bat 'echo Deploying application...'
+                bat "echo Deploying application..."
             }
         }
     }
